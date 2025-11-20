@@ -1,0 +1,6 @@
+# typescript
+node_modules
+dist
+
+/templates/**/pnpm-lock.yaml
+/templates/**/package-lock.json

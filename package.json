@@ -1,0 +1,31 @@
+{
+  "name": "create-kitojs",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Daril Rodriguez",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "create-kitojs": "./dist/index.js"
+  },
+  "files": [
+    "bin",
+    "template"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "npm run build && node ./dist/index.js"
+  },
+  "keywords": [],
+  "devDependencies": {
+    "@kitojs/types": "^1.0.0-alpha.4",
+    "@types/node": "^24.10.1",
+    "@types/prompts": "^2.4.9",
+    "mri": "^1.2.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "ora": "^9.0.0",
+    "prompts": "^2.4.2"
+  }
+}
