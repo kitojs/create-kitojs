@@ -9,14 +9,20 @@
     "create-kitojs": "./dist/index.js"
   },
   "files": [
-    "bin",
-    "template"
+    "dist"
   ],
   "scripts": {
     "build": "tsc",
-    "dev": "npm run build && node ./dist/index.js"
+    "dev": "npm run build && node ./dist/index.js",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
+  "keywords": [
+    "kitojs",
+    "scaffold",
+    "create",
+    "boilerplate",
+    "template"
+  ],
   "devDependencies": {
     "@kitojs/types": "^1.0.0-alpha.4",
     "@types/node": "^24.10.1",
