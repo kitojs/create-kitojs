@@ -43,6 +43,14 @@ const templates: Template[] = [{
         'npm install',
         'npm run dev'
     ]
+}, {
+    name: 'Bun',
+    value: 'bun',
+    steps: [
+        'cd <PROJECT_NAME>',
+        'bun install',
+        'bun dev'
+    ]
 }];
 
 async function selectTemplate(templateValue?: string): Promise<Template | undefined> {
@@ -92,6 +100,10 @@ async function createProject(projectName: string) {
 
     // Select template
     let template = await selectTemplate(argv.template);
+
+    if (!template) {
+        return;
+    }
 
     let spinner = ora(`Creating a new KitoJS project: ${projectName}`).start();
 
