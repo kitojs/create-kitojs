@@ -4,9 +4,7 @@
     "outDir": "./dist",
     "module": "nodenext",
     "target": "esnext",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
@@ -17,13 +15,8 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": [
-    "bin/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["bin/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
