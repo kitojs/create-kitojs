@@ -83,14 +83,27 @@ function getPackageManagerCommands(pkgManager: string) {
     pnpm: { install: "pnpm install", run: "pnpm", exec: "pnpm dlx" },
     yarn: { install: "yarn", run: "yarn", exec: "yarn dlx" },
     bun: { install: "bun install", run: "bun", exec: "bunx" },
-    deno: { install: "deno install", run: "deno task", exec: "deno run" },
+    deno: { install: "", run: "deno task", exec: "deno run" },
   };
 
   return commands[pkgManager] || commands.npm;
 }
 
-function generateReadme(pkgManager: string): string {
+function generateReadme(template: Template, pkgManager: string): string {
   const cmds = getPackageManagerCommands(pkgManager);
+
+  const installSection =
+    template.value === "deno"
+      ? ""
+      : `
+### Install Dependencies
+
+Install project dependencies:
+
+\`\`\`bash
+${cmds?.install}
+\`\`\`
+`;
 
   return `# Kito Project
 
@@ -98,6 +111,7 @@ The high-performance, type-safe and modern TypeScript web framework written in R
 
 ## 🚀 Getting Started
 
+${installSection}
 ### Development
 
 Start the development server with hot reload:
@@ -107,7 +121,9 @@ ${cmds?.run} dev
 \`\`\`
 
 The server will start at \`http://localhost:3000\`
-
+${
+  template.value !== "deno"
+    ? `
 ### Build
 
 Compile TypeScript to JavaScript:
@@ -122,17 +138,31 @@ Run the compiled application:
 
 \`\`\`bash
 ${cmds?.run} start
-\`\`\`
+\`\`\``
+    : `
+### Production
+
+Run the application:
+
+\`\`\`bash
+${cmds?.run} start
+\`\`\``
+}
 
 ## 📁 Project Structure
 
 \`\`\`
 .
 ├── src/
-│   └── index.ts      # Main application entry point
+│   └── index.ts      # Main application entry point${
+    template.value !== "deno"
+      ? `
 ├── dist/             # Compiled output (generated)
 ├── package.json
-└── tsconfig.json
+└── tsconfig.json`
+      : `
+└── deno.json         # Deno configuration`
+  }
 \`\`\`
 
 ## 📖 Learn More
@@ -164,6 +194,13 @@ const templates: Template[] = [
     description: "Blazing fast JavaScript runtime",
     emoji: "🥟",
     steps: ["cd <PROJECT_NAME>", "bun install", "bun dev"],
+  },
+  {
+    name: "Deno",
+    value: "deno",
+    description: "Secure runtime for JavaScript and TypeScript",
+    emoji: "🦕",
+    steps: ["cd <PROJECT_NAME>", "deno task dev"],
   },
 ];
 
@@ -267,21 +304,23 @@ async function createProject(projectName: string) {
 
     await new Promise((resolve) => setTimeout(resolve, 300));
 
-    spinner.text = "Configuring package.json...";
+    if (template.value !== "deno") {
+      spinner.text = "Configuring package.json...";
 
-    const packageJsonPath = path.join(projectName, "package.json");
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+      const packageJsonPath = path.join(projectName, "package.json");
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
 
-    packageJson.name = projectName;
+      packageJson.name = projectName;
 
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+    }
 
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     const pkgManager = detectPackageManager();
     spinner.text = "Generating README.md...";
 
-    const readmeContent = generateReadme(pkgManager);
+    const readmeContent = generateReadme(template, pkgManager);
     const readmePath = path.join(projectName, "README.md");
     fs.writeFileSync(readmePath, readmeContent);
 
@@ -324,14 +363,18 @@ async function createProject(projectName: string) {
     }).start();
 
     try {
-      execSync(`${pkgManager} install`, {
-        stdio: "inherit",
-        cwd: projectName,
-      });
+      if (template.value === "deno") {
+        spinnerDeps.info(`Deno uses npm: specifiers - no installation needed!`);
+      } else {
+        execSync(`${pkgManager} install`, {
+          stdio: "inherit",
+          cwd: projectName,
+        });
 
-      spinnerDeps.succeed(
-        `${successColor("✓")} Dependencies installed successfully!`,
-      );
+        spinnerDeps.succeed(
+          `${successColor("✓")} Dependencies installed successfully!`,
+        );
+      }
     } catch (_) {
       spinnerDeps.fail(
         `${errorColor("✗")} Failed to install dependencies automatically.`,

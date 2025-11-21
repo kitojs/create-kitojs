@@ -1,0 +1,17 @@
+{
+  "tasks": {
+    "dev": "deno run --watch --allow-net --allow-env --allow-read --allow-ffi src/index.ts",
+    "start": "deno run --allow-net --allow-env --allow-read --allow-ffi src/index.ts"
+  },
+  "imports": {
+    "kitojs": "npm:kitojs@^1.0.0-alpha.4"
+  },
+  "compilerOptions": {
+    "lib": ["deno.ns", "esnext"],
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  }
+}
