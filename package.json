@@ -1,28 +1,32 @@
 {
   "name": "create-kitojs",
   "version": "1.0.0",
-  "description": "",
+  "description": "📦 Scaffold Kito projects.",
   "author": "Daril Rodriguez",
   "license": "MIT",
   "type": "module",
+
   "bin": {
     "create-kitojs": "./dist/index.js"
   },
+
   "files": [
     "dist",
     "bin",
     "template"
   ],
+
   "scripts": {
     "build": "tsc",
-    "dev": "npm run build && node ./dist/index.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "pnpm run build"
   },
+
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kitojs/kito.git"
+    "url": "git+https://github.com/kitojs/create-kitojs.git"
   },
-  "homepage": "https://github.com/kitojs/create-kitojs/blob/master/README.md",
+  "homepage": "https://kito.pages.dev",
+  
   "keywords": [
     "kitojs",
     "scaffold",
@@ -30,14 +34,15 @@
     "boilerplate",
     "template"
   ],
+
+  "dependencies": {
+    "ora": "^9.0.0",
+    "prompts": "^2.4.2"
+  },
   "devDependencies": {
     "@types/node": "^24.10.1",
     "@types/prompts": "^2.4.9",
     "mri": "^1.2.0",
     "typescript": "^5.9.3"
-  },
-  "dependencies": {
-    "ora": "^9.0.0",
-    "prompts": "^2.4.2"
   }
 }
