@@ -7,7 +7,7 @@
   "type": "module",
 
   "bin": {
-    "create-kitojs": "./dist/index.js"
+    "create-kitojs": "./dist/index.mjs"
   },
 
   "files": [

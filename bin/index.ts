@@ -1,10 +1,14 @@
 #!/usr/bin/env node
+
+// biome-ignore assist/source/organizeImports: ...
 import mri from "mri";
 import prompts from "prompts";
 import ora from "ora";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { execSync } from "node:child_process";
 
 /**
  * Entry point for the KitoJS project creation CLI tool.
@@ -29,6 +33,18 @@ const argv = mri<{
   alias: { h: "help" },
   string: ["template"],
 });
+
+function detectPackageManager(): string {
+  const userAgent = process.env.npm_config_user_agent ?? "";
+
+  if (userAgent.includes("pnpm")) return "pnpm";
+  if (userAgent.includes("yarn")) return "yarn";
+  if (userAgent.includes("bun")) return "bun";
+  if (userAgent.includes("npm")) return "npm";
+  if (userAgent.includes("deno")) return "deno";
+
+  return "npm";
+}
 
 interface Template {
   name: string;
@@ -57,7 +73,7 @@ async function selectTemplate(
   }
 
   if (templateValue) {
-    let selected = templates.find((t) => t.value === templateValue);
+    const selected = templates.find((t) => t.value === templateValue);
     if (selected) {
       return selected;
     }
@@ -66,7 +82,7 @@ async function selectTemplate(
     return undefined;
   }
 
-  let { selectedTemplate } = await prompts({
+  const { selectedTemplate } = await prompts({
     type: "select",
     name: "selectedTemplate",
     message: "Select a runtime template:",
@@ -83,7 +99,7 @@ async function createProject(projectName: string) {
   // Check if the directory already exists
   if (fs.existsSync(projectName)) {
     if (!argv.overwrite) {
-      let { overwrite } = await prompts({
+      const { overwrite } = await prompts({
         type: "confirm",
         name: "overwrite",
         message: `Directory "${projectName}" already exists. Do you want to overwrite it?`,
@@ -97,13 +113,13 @@ async function createProject(projectName: string) {
   }
 
   // Select template
-  let template = await selectTemplate(argv.template);
+  const template = await selectTemplate(argv.template);
 
   if (!template) {
     return;
   }
 
-  let spinner = ora(`Creating a new KitoJS project: ${projectName}`).start();
+  const spinner = ora(`Creating a new KitoJS project: ${projectName}`).start();
 
   // Remove existing directory
   fs.rmSync(projectName, { recursive: true, force: true });
@@ -129,6 +145,32 @@ async function createProject(projectName: string) {
 
   spinner.succeed(`Project "${projectName}" created successfully!`);
 
+  const pkgManager = detectPackageManager();
+
+  const { installDeps } = await prompts({
+    type: "confirm",
+    name: "installDeps",
+    message: `Do you want to install dependencies using "${pkgManager}"?`,
+    initial: false,
+  });
+
+  if (installDeps) {
+    const spinnerDeps = ora(
+      `Creating a new Kito project: ${projectName}`,
+    ).start();
+
+    try {
+      spinnerDeps.info(`Installing dependencies using ${pkgManager}...\n`);
+
+      execSync(`${pkgManager} install`, { stdio: "inherit", cwd: projectName });
+
+      spinner.succeed(`Dependencies installed successfully!`);
+      spinner.stop();
+    } catch (_) {
+      spinner.fail(`Failed to install dependencies automatically.`);
+    }
+  }
+
   console.log(`\nNext steps:\n`);
 
   if (template) {
@@ -149,7 +191,7 @@ async function init() {
   const projectName = argv._[0];
 
   if (!projectName || typeof projectName !== "string") {
-    let { projectName } = await prompts({
+    const { projectName } = await prompts({
       type: "text",
       name: "projectName",
       message: "Please enter a valid project name:",
