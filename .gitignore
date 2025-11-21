@@ -2,8 +2,5 @@
 node_modules
 dist
 
-# lock files
-/**/bun.lock
-/**/package-lock.json
-/**/pnpm-lock.yaml
-/**/yarn.lock
+# bun lockfile
+bun.lock
