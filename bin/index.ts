@@ -17,6 +17,8 @@ Usage: create-kitojs <PROJECT_NAME> [OPTIONS]
 Options:
     -h, --help       Show this help message
     -v, --version    Show the version number
+    --overwrite     Overwrite existing project directory if it exists
+    --template      Specify a runtime template (e.g., "nodejs", "bun")
 `;
 
 const argv = mri<{
