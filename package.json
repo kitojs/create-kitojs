@@ -13,7 +13,9 @@
   "files": [
     "dist",
     "bin",
-    "template"
+    "template",
+    "readme.md",
+    "license"
   ],
 
   "scripts": {
