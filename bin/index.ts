@@ -186,7 +186,11 @@ const templates: Template[] = [
     value: "nodejs",
     description: "Standard Node.js runtime with TypeScript",
     emoji: "🟢",
-    steps: ["cd <PROJECT_NAME>", "{pkgm} install", "{pkgm} run dev"],
+    steps: [
+      "cd <PROJECT_NAME>",
+      "<PACKAGE_MANAGER> install",
+      "<PACKAGE_MANAGER> run dev",
+    ],
   },
   {
     name: "Bun",
@@ -403,7 +407,7 @@ function printNextSteps(
     const command = chalk.cyan(
       step
         .replace("<PROJECT_NAME>", projectName)
-        .replace("{pkgm}", detectPackageManager()),
+        .replace("<PACKAGE_MANAGER>", detectPackageManager()),
     );
     console.log(`  ${stepNumber} ${command}`);
   });
