@@ -4,7 +4,7 @@
     "start": "deno run --allow-net --allow-env --allow-read --allow-ffi src/index.ts"
   },
   "imports": {
-    "kitojs": "npm:kitojs@^1.0.0-alpha.6"
+    "kitojs": "npm:kitojs@^1.0.0-alpha.7"
   },
   "compilerOptions": {
     "lib": ["deno.ns", "esnext"],
